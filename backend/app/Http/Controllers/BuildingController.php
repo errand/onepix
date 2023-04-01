@@ -13,7 +13,15 @@ class BuildingController extends Controller
      */
     public function index()
     {
-        //
+        return Building::all();
+    }
+
+    /**
+     * Get list of Metro stations near Buildings
+     */
+    public function getMetro($id)
+    {
+        return Building::find($id)->metros()->get();
     }
 
     /**

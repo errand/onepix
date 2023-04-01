@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useAuth } from '@/hooks/auth'
+import { useAuth } from '../hooks/auth'
 
 export default function Home() {
     const { user } = useAuth({ middleware: 'guest' })
@@ -8,7 +8,7 @@ export default function Home() {
     return (
         <>
             <Head>
-                <title>Laravel</title>
+                <title>Welcome</title>
             </Head>
 
             <div className="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0">
