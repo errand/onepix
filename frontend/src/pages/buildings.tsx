@@ -74,7 +74,6 @@ export default function Buildings() {
 
                                <ul className="page-loop with-filter">
 
-
                                    {buildings && buildings.slice(0,limit*(page+1)).map((building) => <Building building={building} key={building.id} />)}
 
                                </ul>
