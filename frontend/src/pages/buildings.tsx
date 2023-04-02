@@ -8,7 +8,7 @@ export default function Buildings() {
 
     const [buildings, setBuildings] = useState<any[]>([])
     const [page, setPage] = useState(0)
-    const limit = 10
+    const limit = 12
     const maxPage = Math.ceil(buildings.length/limit)
 
     const onLoadMore = () => setPage((page+1)%maxPage)

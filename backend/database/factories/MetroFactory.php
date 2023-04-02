@@ -18,7 +18,7 @@ class MetroFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->sentences(2, true),
+            'name' => fake()->unique()->sentence(2, true),
             'color' => fake()->safeHexColor(),
         ];
     }

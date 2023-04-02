@@ -19,6 +19,6 @@ class Building extends Model
      */
     public function metros(): BelongsToMany
     {
-        return $this->belongsToMany(Metro::class);
+        return $this->belongsToMany(Metro::class)->withPivot('distance')->orderByPivot('distance');
     }
 }

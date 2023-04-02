@@ -1,16 +1,28 @@
 import { motion, Variants } from "framer-motion"
 import {useEffect, useState} from "react";
 import { useFetcher } from '../hooks/fetcher';
+import axios from "../lib/axios";
 
 export default function Building({building}) {
 
-    const [stations, setStations] = useState([])
+    const [station, setStation] = useState<any>([])
     const {buildingMetro} = useFetcher()
+    const [errors, setErrors] = useState('')
 
     const {id, title, image, deadline, address, building_class, special} = building;
 
     useEffect(() => {
-        console.log(building)
+        axios
+            .get('/api/buildings/' + id + '/metro')
+            .then((response) => {
+                console.log(response.data)
+                setStation(response.data[0])
+            })
+            .catch(error => {
+                if (error.response.status !== 422) throw error
+
+                setErrors(error.response.data.errors)
+            })
     }, [])
 
     const formatDeadline = (timestamp) => {
@@ -69,11 +81,13 @@ export default function Building({building}) {
 
                     <p className="page-text">Срок сдачи{formatDeadline(deadline)}</p>
 
+                    {station &&
                     <div className="page-text to-metro">
                         <span className="icon-metro icon-metro--red"></span>
-                        <span className="page-text">Студенческая <span> 5 мин.</span></span>
+                        <span className="page-text">{station.name} <span> {station?.pivot?.distance} мин.</span></span>
                         <span className="icon-walk-icon"></span>
                     </div>
+                    }
 
                     <span className="page-text text-desc">{address}</span>
 
