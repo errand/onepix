@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Building;
 use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingRequest;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class BuildingController extends Controller
 {
@@ -13,7 +14,9 @@ class BuildingController extends Controller
      */
     public function index()
     {
-        return Building::all();
+        return QueryBuilder::for(Building::class)
+            ->allowedFilters(['distance', 'building_class'])
+            ->get();
     }
 
     /**

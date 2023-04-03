@@ -15,7 +15,6 @@ export default function Building({building}) {
         axios
             .get('/api/buildings/' + id + '/metro')
             .then((response) => {
-                console.log(response.data)
                 setStation(response.data[0])
             })
             .catch(error => {
@@ -39,8 +38,8 @@ export default function Building({building}) {
     }
     const cardVariants: Variants = {
         offscreen: {
-            y: 100,
-            opacity: 0
+            y: 10,
+            opacity: 0.5
         },
         onscreen: {
             y: 0,
