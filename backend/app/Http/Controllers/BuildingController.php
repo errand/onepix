@@ -5,17 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Building;
 use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingRequest;
-use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+//use Spatie\QueryBuilder\QueryBuilder;
 
 class BuildingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return QueryBuilder::for(Building::class)
-            ->allowedFilters(['distance', 'building_class'])
+//        return QueryBuilder::for(Building::class)
+//            ->allowedFilters(['distance', 'building_class'])
+//            ->get();
+
+        $building_class = $request->input('building_class');
+
+
+        return DB::table('buildings')
+            ->when($building_class, function (Builder $query, string $building_class) {
+                $query->where('building_class', $building_class);
+            })
             ->get();
     }
 

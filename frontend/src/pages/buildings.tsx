@@ -5,10 +5,17 @@ import {useEffect, useState} from "react";
 import useSWR from "swr";
 import Collapsible from "../components/Collapsible";
 
+interface paramType {
+    name?: string,
+    value?: string
+}
+
 export default function Buildings() {
 
     const [buildings, setBuildings] = useState([])
-    const [queryParams, setQueryParams] = useState('')
+    const [queryParams, setQueryParams] = useState<paramType>()
+
+    let params = new FormData();
 
     const [page, setPage] = useState(0)
     const limit = 12
@@ -16,8 +23,25 @@ export default function Buildings() {
 
     const onChange = (event) => {
         const {name, value} = event?.target;
+        setQueryParams({[name]:value})
+        params.set(name, value)
+        let actAddress =''
+
+        let firstRun = true;
         // @ts-ignore
-        setQueryParams({[name]: value})
+        for (let key of params.keys())
+        {
+            if (firstRun)
+            {
+                actAddress += '?';
+                firstRun = false;
+            }
+            else actAddress += '&';
+            actAddress += key + "=" + params.get(key);
+        }
+
+        console.log(actAddress)
+
     }
 
     useEffect(() => {
@@ -27,7 +51,7 @@ export default function Buildings() {
     const onLoadMore = () => setPage((page+1)%maxPage)
 
     const { data } = useSWR([`/api/buildings?page=${page}`, queryParams],() => axios
-        .get('/api/buildings')
+        .get(`/api/buildings`)
         .then(res => setBuildings(res.data))
         .catch(error => {
             if (error.response.status !== 409) throw error
@@ -164,6 +188,37 @@ export default function Buildings() {
                                                                   value="next-year"
                                                            />
                                                            <label htmlFor="next-year">В следующем году</label>
+                                                       </div>
+                                                   </li>
+                                               </ul>
+                                           </Collapsible>
+                                       </div>
+
+                                       <div className="page-filter__category">
+                                           <Collapsible label={'Класс жилья'}>
+                                               <ul className="housing">
+                                                   <li>
+                                                       <div className="checkbox">
+                                                           <input type="checkbox" name="economical" id="economical" onChange={(ev) => console.log(ev.target.value)} />
+                                                               <label htmlFor="economical">Эконом</label>
+                                                       </div>
+                                                   </li>
+                                                   <li>
+                                                       <div className="checkbox">
+                                                           <input type="checkbox" name="comfort" id="comfort" />
+                                                               <label htmlFor="comfort">Комфорт</label>
+                                                       </div>
+                                                   </li>
+                                                   <li>
+                                                       <div className="checkbox">
+                                                           <input type="checkbox" name="business" id="business" />
+                                                               <label htmlFor="business">Бизнес</label>
+                                                       </div>
+                                                   </li>
+                                                   <li>
+                                                       <div className="checkbox">
+                                                           <input type="checkbox" name="elite" id="elite" />
+                                                               <label htmlFor="elite">Элит</label>
                                                        </div>
                                                    </li>
                                                </ul>

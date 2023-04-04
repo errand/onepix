@@ -19,13 +19,17 @@ return new class extends Migration
             $table->string('address');
             $table->date('deadline');
 
-            $table->text('building_class')->nullable(); // Класс жилья
+            $table->boolean('economical')->nullable(); // Класс жилья
+            $table->boolean('comfort')->nullable(); // Класс жилья
+            $table->boolean('business')->nullable(); // Класс жилья
+            $table->boolean('elite')->nullable(); // Класс жилья
+
             $table->text('pricing_group')->nullable(); // Ценовая категория
 
             $table->boolean('landscaping')->nullable(); // Благоустройство двора
             $table->boolean('decoration')->nullable(); // Отделка под ключ
             $table->boolean('parking')->nullable(); // Подземный паркинг
-            $table->text('constructive')->nullable(); // Конструктив
+            $table->boolean('brick')->nullable(); // Конструктив
             $table->boolean('river_view')->nullable();
             $table->boolean('forest')->nullable();
             $table->boolean('promo')->nullable();
