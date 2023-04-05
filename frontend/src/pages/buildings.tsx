@@ -4,16 +4,12 @@ import axios from "../lib/axios";
 import {useEffect, useState} from "react";
 import useSWR from "swr";
 import Collapsible from "../components/Collapsible";
-
-interface paramType {
-    name?: string,
-    value?: string
-}
+import Checkbox from "../components/Checkbox";
 
 export default function Buildings() {
 
     const [buildings, setBuildings] = useState([])
-    const [queryParams, setQueryParams] = useState<paramType>()
+    const [queryParams, setQueryParams] = useState([])
 
     let params = new FormData();
 
@@ -23,7 +19,6 @@ export default function Buildings() {
 
     const onChange = (event) => {
         const {name, value} = event?.target;
-        setQueryParams({[name]:value})
         params.set(name, value)
         let actAddress =''
 
@@ -40,8 +35,24 @@ export default function Buildings() {
             actAddress += key + "=" + params.get(key);
         }
 
-        console.log(actAddress)
+        //setQueryParams(actAddress)
 
+    }
+
+    const handleChange = evt => {
+        const prevState = queryParams;
+        console.log(evt[0].field)
+        console.log(evt[0].value)
+        if(prevState.some(elem => elem.field === evt[0].field && elem.value === evt[0].value)) {
+            const newParams = prevState.filter(elem => !(elem.field === evt[0].field && elem.value === evt[0].value))
+            setQueryParams(newParams)
+        } else {
+            setQueryParams(previousData => [...previousData, ...evt])
+        }
+        //console.log(queryParams)
+
+        //setQueryParams(prevState => [...prevState, ...evt])
+        //console.log(queryParams)
     }
 
     useEffect(() => {
@@ -55,7 +66,7 @@ export default function Buildings() {
         .then(res => setBuildings(res.data))
         .catch(error => {
             if (error.response.status !== 409) throw error
-        }),);
+        }));
 
     return (
        <>
@@ -198,27 +209,50 @@ export default function Buildings() {
                                            <Collapsible label={'Класс жилья'}>
                                                <ul className="housing">
                                                    <li>
+                                                       <Checkbox label={'Эконом'}
+                                                                 value={'Эконом'}
+                                                                 name={'building_class'}
+                                                                 id={'economical'}
+                                                                 icon={null}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
                                                        <div className="checkbox">
-                                                           <input type="checkbox" name="economical" id="economical" onChange={(ev) => console.log(ev.target.value)} />
-                                                               <label htmlFor="economical">Эконом</label>
+                                                           <Checkbox label={'Комфорт'}
+                                                                     value={'Комфорт'}
+                                                                     name={'building_class'}
+                                                                     id={'comfort'}
+                                                                     icon={null}
+                                                                     checked={false}
+                                                                     onChange={handleChange}
+                                                           />
                                                        </div>
                                                    </li>
                                                    <li>
                                                        <div className="checkbox">
-                                                           <input type="checkbox" name="comfort" id="comfort" />
-                                                               <label htmlFor="comfort">Комфорт</label>
+                                                           <Checkbox label={'Бизнес'}
+                                                                     value={'Бизнес'}
+                                                                     name={'building_class'}
+                                                                     id={'business'}
+                                                                     icon={null}
+                                                                     checked={false}
+                                                                     onChange={handleChange}
+                                                           />
                                                        </div>
                                                    </li>
                                                    <li>
+
                                                        <div className="checkbox">
-                                                           <input type="checkbox" name="business" id="business" />
-                                                               <label htmlFor="business">Бизнес</label>
-                                                       </div>
-                                                   </li>
-                                                   <li>
-                                                       <div className="checkbox">
-                                                           <input type="checkbox" name="elite" id="elite" />
-                                                               <label htmlFor="elite">Элит</label>
+                                                           <Checkbox label={'Элит'}
+                                                                     value={'Элит'}
+                                                                     name={'building_class'}
+                                                                     id={'elite'}
+                                                                     icon={null}
+                                                                     checked={false}
+                                                                     onChange={handleChange}
+                                                           />
                                                        </div>
                                                    </li>
                                                </ul>

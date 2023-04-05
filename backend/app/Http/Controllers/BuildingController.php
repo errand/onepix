@@ -25,9 +25,10 @@ class BuildingController extends Controller
 
 
         return DB::table('buildings')
-            ->when($building_class, function (Builder $query, string $building_class) {
-                $query->where('building_class', $building_class);
+            ->when($building_class, function (Builder $query, array $building_class) {
+                $query->whereIn('building_class', $building_class);
             })
+
             ->get();
     }
 
