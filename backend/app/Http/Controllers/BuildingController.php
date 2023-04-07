@@ -23,13 +23,16 @@ class BuildingController extends Controller
 
         $building_class = $request->input('building_class');
 
+        return response()->json([
+            'class' => $building_class,
+        ]);
 
-        return DB::table('buildings')
-            ->when($building_class, function (Builder $query, array $building_class) {
-                $query->whereIn('building_class', $building_class);
-            })
-
-            ->get();
+//        return DB::table('buildings')
+//            ->when($building_class, function (Builder $query, array $building_class) {
+//                $query->whereIn('building_class', $building_class);
+//            })
+//
+//            ->get();
     }
 
     /**

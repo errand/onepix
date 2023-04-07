@@ -8,65 +8,65 @@ import Checkbox from "../components/Checkbox";
 
 export default function Buildings() {
 
-    const [buildings, setBuildings] = useState([])
+    const baseUrl = '/api/buildings'
     const [queryParams, setQueryParams] = useState([])
+    const [queryAddress, setQueryAddress] = useState('')
+    const [page, setPage] = useState(0)
+    const [error, setError] = useState('')
+
+    const getBuildings = (page, params?) => axios
+            .get(baseUrl + `?page=${page}${params}`)
+            .then(res => res.data)
+            .catch(error => {
+                if (error.response.status !== 409)  setError(error)
+            })
+
+    const { data: buildings, mutate } = useSWR(baseUrl+page+queryAddress, () => getBuildings(page, queryAddress));
+    const limit = 12
+    const maxPage = Math.ceil(buildings?.length/limit)
 
     let params = new FormData();
 
-    const [page, setPage] = useState(0)
-    const limit = 12
-    const maxPage = Math.ceil(buildings.length/limit)
-
     const onChange = (event) => {
-        const {name, value} = event?.target;
-        params.set(name, value)
-        let actAddress =''
+        //console.log(event)
+    }
 
-        let firstRun = true;
+    const convertParamsToQueryString = () => {
+        queryParams.forEach(param => {
+            params.set(param.field, param.value)
+        })
+        let actAddress =''
         // @ts-ignore
         for (let key of params.keys())
         {
-            if (firstRun)
-            {
-                actAddress += '?';
-                firstRun = false;
-            }
-            else actAddress += '&';
-            actAddress += key + "=" + params.get(key);
+            actAddress += '&';
+            actAddress += key + "[]=" + params.get(key);
         }
 
-        //setQueryParams(actAddress)
-
+        setQueryAddress(actAddress)
     }
 
-    const handleChange = evt => {
+    const handleChange = (evt) => {
         const prevState = queryParams;
-        console.log(evt[0].field)
-        console.log(evt[0].value)
         if(prevState.some(elem => elem.field === evt[0].field && elem.value === evt[0].value)) {
             const newParams = prevState.filter(elem => !(elem.field === evt[0].field && elem.value === evt[0].value))
             setQueryParams(newParams)
         } else {
             setQueryParams(previousData => [...previousData, ...evt])
         }
-        //console.log(queryParams)
 
-        //setQueryParams(prevState => [...prevState, ...evt])
-        //console.log(queryParams)
+        convertParamsToQueryString()
     }
 
     useEffect(() => {
+
+        const newBuildings = getBuildings(page, queryAddress)
+        mutate(newBuildings)
         console.log(queryParams)
     })
 
     const onLoadMore = () => setPage((page+1)%maxPage)
 
-    const { data } = useSWR([`/api/buildings?page=${page}`, queryParams],() => axios
-        .get(`/api/buildings`)
-        .then(res => setBuildings(res.data))
-        .catch(error => {
-            if (error.response.status !== 409) throw error
-        }));
 
     return (
        <>
