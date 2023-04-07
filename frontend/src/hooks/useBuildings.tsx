@@ -1,9 +1,8 @@
 import useSWR from "swr";
 import axios from "../lib/axios";
-import {removeTrailingSlash} from "next/dist/shared/lib/router/utils/remove-trailing-slash";
 
 export default function useBuildings(page, address) {
-    console.log(address)
+    // @ts-ignore
     const { data, error, isLoading } = useSWR([`/api/buildings?page=${page}`, address],() => axios
         .get(`/api/buildings${address}`)
         .then(res => res.data)

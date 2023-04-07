@@ -21,30 +21,15 @@ export default function Buildings() {
                 if (error.response.status !== 409)  setError(error)
             })
 
-    const { data: buildings, mutate } = useSWR(baseUrl+page+queryAddress, () => getBuildings(page, queryAddress));
+    // @ts-ignore
+    const { data: buildings, isLoading } = useSWR([baseUrl, page, queryAddress], () => getBuildings(page, queryAddress));
     const limit = 12
     const maxPage = Math.ceil(buildings?.length/limit)
-
-    let params = new FormData();
 
     const onChange = (event) => {
         //console.log(event)
     }
 
-    const convertParamsToQueryString = () => {
-        queryParams.forEach(param => {
-            params.set(param.field, param.value)
-        })
-        let actAddress =''
-        // @ts-ignore
-        for (let key of params.keys())
-        {
-            actAddress += '&';
-            actAddress += key + "[]=" + params.get(key);
-        }
-
-        setQueryAddress(actAddress)
-    }
 
     const handleChange = (evt) => {
         const prevState = queryParams;
@@ -54,20 +39,20 @@ export default function Buildings() {
         } else {
             setQueryParams(previousData => [...previousData, ...evt])
         }
-
-        convertParamsToQueryString()
     }
 
     useEffect(() => {
+        let actAddress =''
+        queryParams.forEach(param => {
+            actAddress += '&';
+            actAddress += param.field + (param.field === 'building_class' ? "[]=" : '') + param.value;
+        })
+        setQueryAddress(actAddress)
 
-        const newBuildings = getBuildings(page, queryAddress)
-        mutate(newBuildings)
-        console.log(queryParams)
     })
 
     const onLoadMore = () => setPage((page+1)%maxPage)
-
-
+    if (isLoading) return <h1>loading...</h1>
     return (
        <>
            <main className="main">
@@ -121,7 +106,7 @@ export default function Buildings() {
                            <div className="page-loop__wrapper loop tab-content tab-content__active">
 
                                <ul className="page-loop with-filter">
-
+                                   {error && <>error</>}
                                    {buildings && buildings.slice(0,limit*(page+1)).map((building) => <Building building={building} key={building.id} />)}
 
                                </ul>
