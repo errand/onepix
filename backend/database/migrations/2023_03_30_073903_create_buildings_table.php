@@ -22,18 +22,20 @@ return new class extends Migration
             $table->boolean('building_class')->nullable(); // Класс жилья
             $table->text('pricing_group')->nullable(); // Ценовая категория
 
-            $table->boolean('landscaping')->nullable(); // Благоустройство двора
-            $table->boolean('decoration')->nullable(); // Отделка под ключ
+            $table->integer('floors')->nullable(); // Кол-во этажей
+
+            $table->boolean('yard')->nullable(); // Благоустройство двора
+            $table->boolean('finishing')->nullable(); // Отделка под ключ
             $table->boolean('parking')->nullable(); // Подземный паркинг
             $table->text('constructive')->nullable(); // Конструктив
-            $table->boolean('river_view')->nullable();
+            $table->boolean('river')->nullable();
             $table->boolean('forest')->nullable();
-            $table->boolean('promo')->nullable();
+            $table->boolean('sale')->nullable();
 
-            $table->boolean('no_cars')->nullable(); // двор без машин
-            $table->float('floor_height', 2, 2)->default(2.7); // высота потолка
-            $table->boolean('storage_room')->nullable(); // кладовые
-            $table->boolean('panorama_windows')->nullable(); // панорамные окна
+            $table->boolean('without_cars')->nullable(); // двор без машин
+            $table->float('ceiling', 2, 2)->default(2.7); // высота потолка
+            $table->boolean('pantries')->nullable(); // кладовые
+            $table->boolean('windows')->nullable(); // панорамные окна
 
             $table->boolean('special')->nullable(); // услуги 0
 

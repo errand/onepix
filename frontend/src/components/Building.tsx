@@ -1,15 +1,12 @@
 import { motion, Variants } from "framer-motion"
 import {useEffect, useState} from "react";
-import { useFetcher } from '../hooks/fetcher';
 import axios from "../lib/axios";
 
 export default function Building({building}) {
 
     const [station, setStation] = useState<any>([])
-    const {buildingMetro} = useFetcher()
-    const [errors, setErrors] = useState('')
 
-    const {id, title, image, deadline, address, building_class, special} = building;
+    const {id, title, image, deadline, address, building_class, special, pantries, windows} = building;
 
     useEffect(() => {
         axios
@@ -19,8 +16,6 @@ export default function Building({building}) {
             })
             .catch(error => {
                 if (error.response.status !== 422) throw error
-
-                setErrors(error.response.data.errors)
             })
     }, [])
 
@@ -77,7 +72,7 @@ export default function Building({building}) {
                 <div className="page-loop__item-info">
 
                     <h3 className="page-title-h3">{title}</h3>
-
+                    <p>pantries: {pantries}, windows: {windows}</p>
                     <p className="page-text">Срок сдачи{formatDeadline(deadline)}</p>
 
                     {station &&

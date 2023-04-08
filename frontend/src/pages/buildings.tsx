@@ -43,9 +43,10 @@ export default function Buildings() {
 
     useEffect(() => {
         let actAddress =''
+        console.log(queryParams)
         queryParams.forEach(param => {
             actAddress += '&';
-            actAddress += param.field + (param.field === 'building_class' ? "[]=" : '') + param.value;
+            actAddress += param.field + ((param.field === 'building_class' || param.field === 'constructive') ? "[]=" : '=') + param.value;
         })
         setQueryAddress(actAddress)
 
@@ -107,6 +108,7 @@ export default function Buildings() {
 
                                <ul className="page-loop with-filter">
                                    {error && <>error</>}
+                                   {buildings?.length < 1 && <>Подходящих вариантов не найдено</>}
                                    {buildings && buildings.slice(0,limit*(page+1)).map((building) => <Building building={building} key={building.id} />)}
 
                                </ul>
@@ -239,6 +241,130 @@ export default function Buildings() {
                                                                      onChange={handleChange}
                                                            />
                                                        </div>
+                                                   </li>
+                                               </ul>
+                                           </Collapsible>
+                                       </div>
+
+                                       <div className="page-filter__category">
+                                           <Collapsible label={'Основные опции'}>
+                                               <ul className="general">
+                                                   <li>
+                                                       <Checkbox label={'Благоустроенный двор'}
+                                                                 value={1}
+                                                                 name={'yard'}
+                                                                 id={'yard'}
+                                                                 icon={'icon-garden'}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
+                                                       <Checkbox label={'Отделка под ключ'}
+                                                                 value={1}
+                                                                 name={'finishing'}
+                                                                 id={'finishing'}
+                                                                 icon={'icon-paint'}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
+                                                       <Checkbox label={'Подземный паркинг'}
+                                                                 value={1}
+                                                                 name={'parking'}
+                                                                 id={'parking'}
+                                                                 icon={'icon-parking'}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
+                                                       <Checkbox label={'Кирпичный дом'}
+                                                                 value={'Кирпичное'}
+                                                                 name={'constructive'}
+                                                                 id={'constructive'}
+                                                                 icon={'icon-brick'}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
+                                                       <Checkbox label={'Вид на реку'}
+                                                                 value={1}
+                                                                 name={'river'}
+                                                                 id={'river'}
+                                                                 icon={'icon-water'}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
+                                                       <Checkbox label={'Лес рядом'}
+                                                                 value={1}
+                                                                 name={'forest'}
+                                                                 id={'forest'}
+                                                                 icon={'icon-tree'}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
+                                                       <Checkbox label={'Есть акции'}
+                                                                 value={1}
+                                                                 name={'sale'}
+                                                                 id={'sale'}
+                                                                 icon={'icon-sale'}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                               </ul>
+                                           </Collapsible>
+                                       </div>
+
+                                       <div className="page-filter__category">
+                                           <Collapsible label={'Дополнительные опции'}>
+                                               <ul className="additional">
+                                                   <li>
+                                                       <Checkbox label={'Двор без машин'}
+                                                                 value={1}
+                                                                 name={'without_cars'}
+                                                                 id={'without_cars'}
+                                                                 icon={null}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
+                                                       <Checkbox label={'Высокие потолки'}
+                                                                 value={1}
+                                                                 name={'ceiling'}
+                                                                 id={'ceiling'}
+                                                                 icon={null}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
+                                                       <Checkbox label={'Есть кладовые'}
+                                                                 value={1}
+                                                                 name={'pantries'}
+                                                                 id={'pantries'}
+                                                                 icon={null}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
+                                                   <li>
+                                                       <Checkbox label={'Панорамные окна'}
+                                                                 value={1}
+                                                                 name={'windows'}
+                                                                 id={'windows'}
+                                                                 icon={null}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
                                                    </li>
                                                </ul>
                                            </Collapsible>

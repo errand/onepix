@@ -22,10 +22,54 @@ class BuildingController extends Controller
 //            ->get();
 
         $building_class = $request->input('building_class');
+        $yard = $request->input('yard');
+        $finishing = $request->input('finishing');
+        $parking = $request->input('parking');
+        $constructive = $request->input('constructive');
+        $river = $request->input('river');
+        $forest = $request->input('forest');
+        $sale = $request->input('sale');
+        $without_cars = $request->input('without_cars');
+        $ceiling = $request->input('ceiling');
+        $pantries = $request->input('pantries');
+        $windows = $request->input('windows');
 
         return DB::table('buildings')
             ->when($building_class, function (Builder $query, array $building_class) {
                 $query->whereIn('building_class', $building_class);
+            })
+            ->when($yard, function (Builder $query, string $yard) {
+                $query->where('yard', $yard);
+            })
+            ->when($finishing, function (Builder $query, string $finishing) {
+                $query->where('finishing', $finishing);
+            })
+            ->when($parking, function (Builder $query, string $parking) {
+                $query->where('parking', $parking);
+            })
+            ->when($constructive, function (Builder $query, array $constructive) {
+                $query->whereIn('constructive', $constructive);
+            })
+            ->when($river, function (Builder $query, string $river) {
+                $query->where('river', $river);
+            })
+            ->when($forest, function (Builder $query, string $forest) {
+                $query->where('forest', $forest);
+            })
+            ->when($sale, function (Builder $query, string $sale) {
+                $query->where('sale', $sale);
+            })
+            ->when($without_cars, function (Builder $query, string $without_cars) {
+                $query->where('without_cars', $without_cars);
+            })
+            ->when($ceiling, function (Builder $query, string $ceiling) {
+                $query->where('ceiling', '>', 2.7);
+            })
+            ->when($pantries, function (Builder $query, string $pantries) {
+                $query->where('pantries', $pantries);
+            })
+            ->when($windows, function (Builder $query, string $windows) {
+                $query->where('windows', $windows);
             })
 
             ->get();

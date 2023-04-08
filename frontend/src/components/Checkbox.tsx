@@ -4,7 +4,7 @@ interface checkboxType {
     label: string,
     name: string,
     id: string,
-    value: string,
+    value: string | number,
     icon: string,
     checked: boolean,
     onChange?: (e: any) => void;
