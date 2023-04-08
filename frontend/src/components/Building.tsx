@@ -6,7 +6,7 @@ export default function Building({building}) {
 
     const [station, setStation] = useState<any>([])
 
-    const {id, title, image, deadline, address, building_class, special, pantries, windows} = building;
+    const {id, title, image, deadline, address, building_class, special, floors} = building;
 
     useEffect(() => {
         axios
@@ -72,7 +72,7 @@ export default function Building({building}) {
                 <div className="page-loop__item-info">
 
                     <h3 className="page-title-h3">{title}</h3>
-                    <p>pantries: {pantries}, windows: {windows}</p>
+                    <p>floor: {floors}</p>
                     <p className="page-text">Срок сдачи{formatDeadline(deadline)}</p>
 
                     {station &&

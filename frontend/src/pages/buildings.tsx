@@ -41,16 +41,23 @@ export default function Buildings() {
         }
     }
 
+    const handleResetClick = (e) => {
+        setQueryParams([])
+        setQueryAddress('')
+
+        e.target.reset()
+    }
+
     useEffect(() => {
         let actAddress =''
-        console.log(queryParams)
         queryParams.forEach(param => {
             actAddress += '&';
             actAddress += param.field + ((param.field === 'building_class' || param.field === 'constructive') ? "[]=" : '=') + param.value;
         })
         setQueryAddress(actAddress)
-
-    })
+        console.log(queryParams)
+        console.log(queryAddress)
+    }, [queryParams])
 
     const onLoadMore = () => setPage((page+1)%maxPage)
     if (isLoading) return <h1>loading...</h1>
@@ -140,7 +147,7 @@ export default function Buildings() {
                            <div className="page-filter__wrapper">
 
                                <form id="page-filter" className="page-filter__form"
-                                     onChange={onChange}>
+                                     onChange={onChange} onSubmit={handleResetClick}>
 
                                    <div className="page-filter__body">
 
@@ -366,6 +373,16 @@ export default function Buildings() {
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
+                                                   <li>
+                                                       <Checkbox label={'Малоэтажный (< 10 этажей)'}
+                                                                 value={1}
+                                                                 name={'low_rise'}
+                                                                 id={'low_rise'}
+                                                                 icon={null}
+                                                                 checked={false}
+                                                                 onChange={handleChange}
+                                                       />
+                                                   </li>
                                                </ul>
                                            </Collapsible>
                                        </div>
@@ -373,10 +390,6 @@ export default function Buildings() {
                                    </div>
 
                                    <div className="page-filter__buttons">
-
-                                       <button className="button button--pink w-100" type="submit"
-                                               id="apply_filter">Применить фильтры
-                                       </button>
 
                                        <button className="button w-100" type="reset" id="reset_filter">Сбросить фильтры
                                            <svg width="9" height="8" viewBox="0 0 9 8" fill="none"

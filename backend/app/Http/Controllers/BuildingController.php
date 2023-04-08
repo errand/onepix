@@ -33,6 +33,7 @@ class BuildingController extends Controller
         $ceiling = $request->input('ceiling');
         $pantries = $request->input('pantries');
         $windows = $request->input('windows');
+        $low_rise = $request->input('low_rise');
 
         return DB::table('buildings')
             ->when($building_class, function (Builder $query, array $building_class) {
@@ -70,6 +71,9 @@ class BuildingController extends Controller
             })
             ->when($windows, function (Builder $query, string $windows) {
                 $query->where('windows', $windows);
+            })
+            ->when($low_rise, function (Builder $query, string $low_rise) {
+                $query->where('floors', '<', 10);
             })
 
             ->get();
