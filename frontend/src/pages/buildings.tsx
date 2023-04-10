@@ -5,11 +5,12 @@ import {useEffect, useState} from "react";
 import useSWR from "swr";
 import Collapsible from "../components/Collapsible";
 import Checkbox from "../components/Checkbox";
+import Radio from "../components/Radio";
 
 export default function Buildings() {
 
     const baseUrl = '/api/buildings'
-    const [queryParams, setQueryParams] = useState([])
+    const [queryParams, setQueryParams] = useState([{field: "deadline", value: "Любой срок"}])
     const [queryAddress, setQueryAddress] = useState('')
     const [page, setPage] = useState(0)
     const [error, setError] = useState('')
@@ -26,38 +27,34 @@ export default function Buildings() {
     const limit = 12
     const maxPage = Math.ceil(buildings?.length/limit)
 
-    const onChange = (event) => {
-        //console.log(event)
-    }
-
-
     const handleChange = (evt) => {
-        const prevState = queryParams;
-        if(prevState.some(elem => elem.field === evt[0].field && elem.value === evt[0].value)) {
-            const newParams = prevState.filter(elem => !(elem.field === evt[0].field && elem.value === evt[0].value))
-            setQueryParams(newParams)
+        if(queryParams.some(elem => elem.field === evt[0].field && elem.value === evt[0].value)) {
+            setQueryParams(queryParams.filter(elem => !(elem.field === evt[0].field && elem.value === evt[0].value)))
         } else {
             setQueryParams(previousData => [...previousData, ...evt])
         }
     }
 
-    const handleResetClick = (e) => {
-        setQueryParams([])
-        setQueryAddress('')
-
+    const handleSubmit = (e) => {
+        e.preventDefault()
         e.target.reset()
     }
 
+    const handleResetClick = (e) => {
+        setQueryParams([])
+        setQueryAddress('')
+        setPage(0)
+    }
+
     useEffect(() => {
+        console.log(queryParams)
         let actAddress =''
         queryParams.forEach(param => {
             actAddress += '&';
             actAddress += param.field + ((param.field === 'building_class' || param.field === 'constructive') ? "[]=" : '=') + param.value;
         })
         setQueryAddress(actAddress)
-        console.log(queryParams)
-        console.log(queryAddress)
-    }, [queryParams])
+    })
 
     const onLoadMore = () => setPage((page+1)%maxPage)
     if (isLoading) return <h1>loading...</h1>
@@ -146,8 +143,7 @@ export default function Buildings() {
 
                            <div className="page-filter__wrapper">
 
-                               <form id="page-filter" className="page-filter__form"
-                                     onChange={onChange} onSubmit={handleResetClick}>
+                               <form id="page-filter" className="page-filter__form" onSubmit={handleSubmit}>
 
                                    <div className="page-filter__body">
 
@@ -155,45 +151,44 @@ export default function Buildings() {
                                            <Collapsible label={'Срок сдачи'}>
                                                <ul className="deadline">
                                                    <li>
-                                                       <div className="radio">
-                                                           <input type="radio"
-                                                                  name="deadline"
-                                                                  id="all"
-                                                                  value="all"
-                                                                  defaultChecked={true}
+                                                       <Radio
+                                                           label={'Любой'}
+                                                           name={'deadline'}
+                                                           id={'deadline'}
+                                                           value={'all'}
+                                                           checked={queryParams.some(item => item.value === "Любой срок")}
+                                                           onChange={handleChange}
                                                            />
-                                                           <label htmlFor="all">Любой</label>
-                                                       </div>
                                                    </li>
                                                    <li>
-                                                       <div className="radio">
-                                                           <input type="radio"
-                                                                  name="deadline"
-                                                                  id="passed"
-                                                                  value="passed"
-                                                           />
-                                                           <label htmlFor="passed">Сдан</label>
-                                                       </div>
+                                                       <Radio
+                                                           label={'Сдан'}
+                                                           name={'deadline'}
+                                                           id={'passed'}
+                                                           value={'Сдан'}
+                                                           checked={queryParams.some(item => item.value === "Сдан")}
+                                                           onChange={handleChange}
+                                                       />
                                                    </li>
                                                    <li>
-                                                       <div className="radio">
-                                                           <input type="radio"
-                                                                  name="deadline"
-                                                                  id="this-year"
-                                                                  value="this-year"
-                                                           />
-                                                           <label htmlFor="this-year">В этом году</label>
-                                                       </div>
+                                                       <Radio
+                                                           label={'В этом году'}
+                                                           name={'deadline'}
+                                                           id={'this_year'}
+                                                           value={'В этом году'}
+                                                           checked={queryParams.some(item => item.value === "В этом году")}
+                                                           onChange={handleChange}
+                                                       />
                                                    </li>
                                                    <li>
-                                                       <div className="radio">
-                                                           <input type="radio"
-                                                                  name="deadline"
-                                                                  id="next-year"
-                                                                  value="next-year"
-                                                           />
-                                                           <label htmlFor="next-year">В следующем году</label>
-                                                       </div>
+                                                       <Radio
+                                                           label={'В следующем году'}
+                                                           name={'deadline'}
+                                                           id={'next_year'}
+                                                           value={'В следующем году'}
+                                                           checked={queryParams.some(item => item.value === "В следующем году")}
+                                                           onChange={handleChange}
+                                                       />
                                                    </li>
                                                </ul>
                                            </Collapsible>
@@ -208,7 +203,7 @@ export default function Buildings() {
                                                                  name={'building_class'}
                                                                  id={'economical'}
                                                                  icon={null}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === "Эконом")}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
@@ -219,7 +214,7 @@ export default function Buildings() {
                                                                      name={'building_class'}
                                                                      id={'comfort'}
                                                                      icon={null}
-                                                                     checked={false}
+                                                                     checked={queryParams.some(item => item.value === "Комфорт")}
                                                                      onChange={handleChange}
                                                            />
                                                        </div>
@@ -231,7 +226,7 @@ export default function Buildings() {
                                                                      name={'building_class'}
                                                                      id={'business'}
                                                                      icon={null}
-                                                                     checked={false}
+                                                                     checked={queryParams.some(item => item.value === "Бизнес")}
                                                                      onChange={handleChange}
                                                            />
                                                        </div>
@@ -244,7 +239,7 @@ export default function Buildings() {
                                                                      name={'building_class'}
                                                                      id={'elite'}
                                                                      icon={null}
-                                                                     checked={false}
+                                                                     checked={queryParams.some(item => item.value === "Элит")}
                                                                      onChange={handleChange}
                                                            />
                                                        </div>
@@ -258,31 +253,31 @@ export default function Buildings() {
                                                <ul className="general">
                                                    <li>
                                                        <Checkbox label={'Благоустроенный двор'}
-                                                                 value={1}
+                                                                 value={'Благоустроенный двор'}
                                                                  name={'yard'}
                                                                  id={'yard'}
                                                                  icon={'icon-garden'}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === "Благоустроенный двор")}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
                                                    <li>
                                                        <Checkbox label={'Отделка под ключ'}
-                                                                 value={1}
+                                                                 value={'Отделка под ключ'}
                                                                  name={'finishing'}
                                                                  id={'finishing'}
                                                                  icon={'icon-paint'}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Отделка под ключ')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
                                                    <li>
                                                        <Checkbox label={'Подземный паркинг'}
-                                                                 value={1}
+                                                                 value={'Подземный паркинг'}
                                                                  name={'parking'}
                                                                  id={'parking'}
                                                                  icon={'icon-parking'}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Подземный паркинг')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
@@ -292,37 +287,37 @@ export default function Buildings() {
                                                                  name={'constructive'}
                                                                  id={'constructive'}
                                                                  icon={'icon-brick'}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Кирпичное')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
                                                    <li>
                                                        <Checkbox label={'Вид на реку'}
-                                                                 value={1}
+                                                                 value={'Вид на реку'}
                                                                  name={'river'}
                                                                  id={'river'}
                                                                  icon={'icon-water'}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Вид на реку')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
                                                    <li>
                                                        <Checkbox label={'Лес рядом'}
-                                                                 value={1}
+                                                                 value={'Лес рядом'}
                                                                  name={'forest'}
                                                                  id={'forest'}
                                                                  icon={'icon-tree'}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Лес рядом')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
                                                    <li>
                                                        <Checkbox label={'Есть акции'}
-                                                                 value={1}
+                                                                 value={'Есть акции'}
                                                                  name={'sale'}
                                                                  id={'sale'}
                                                                  icon={'icon-sale'}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Есть акции')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
@@ -335,51 +330,51 @@ export default function Buildings() {
                                                <ul className="additional">
                                                    <li>
                                                        <Checkbox label={'Двор без машин'}
-                                                                 value={1}
+                                                                 value={'Двор без машин'}
                                                                  name={'without_cars'}
                                                                  id={'without_cars'}
                                                                  icon={null}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Двор без машин')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
                                                    <li>
                                                        <Checkbox label={'Высокие потолки'}
-                                                                 value={1}
+                                                                 value={'Высокие потолки'}
                                                                  name={'ceiling'}
                                                                  id={'ceiling'}
                                                                  icon={null}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Высокие потолки')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
                                                    <li>
                                                        <Checkbox label={'Есть кладовые'}
-                                                                 value={1}
+                                                                 value={'Есть кладовые'}
                                                                  name={'pantries'}
                                                                  id={'pantries'}
                                                                  icon={null}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Есть кладовые')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
                                                    <li>
                                                        <Checkbox label={'Панорамные окна'}
-                                                                 value={1}
+                                                                 value={'Панорамные окна'}
                                                                  name={'windows'}
                                                                  id={'windows'}
                                                                  icon={null}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Панорамные окна')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
                                                    <li>
                                                        <Checkbox label={'Малоэтажный (< 10 этажей)'}
-                                                                 value={1}
+                                                                 value={'Малоэтажный'}
                                                                  name={'low_rise'}
                                                                  id={'low_rise'}
                                                                  icon={null}
-                                                                 checked={false}
+                                                                 checked={queryParams.some(item => item.value === 'Малоэтажный')}
                                                                  onChange={handleChange}
                                                        />
                                                    </li>
@@ -391,7 +386,7 @@ export default function Buildings() {
 
                                    <div className="page-filter__buttons">
 
-                                       <button className="button w-100" type="reset" id="reset_filter">Сбросить фильтры
+                                       <button className="button w-100" type="reset" id="reset_filter" onClick={handleResetClick}>Сбросить фильтры
                                            <svg width="9" height="8" viewBox="0 0 9 8" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                <path

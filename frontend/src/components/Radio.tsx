@@ -1,33 +1,33 @@
 
-interface checkboxType {
+interface radioType {
     label: string,
     name: string,
     id: string,
     value: string | number,
-    icon: string,
-    checked: boolean,
+    checked?: boolean,
+    defaultChecked?: boolean,
     onChange?: (e: any) => void;
 }
 
-const Checkbox = ({ label, name, id, value, icon, checked, onChange, ...props }: checkboxType) => {
+const Radio = ({ label, name, id, value, checked, defaultChecked, onChange, ...props }: radioType) => {
 
     const handleOnChange = () => {
         onChange([{field: name, value: value}])
     }
 
     return (
-        <div className="checkbox">
-            <input type="checkbox"
+        <div className="radio">
+            <input type="radio"
                    name={name}
                    id={id}
                    value={value}
                    checked={checked}
+                   defaultChecked={defaultChecked}
                    onChange={handleOnChange}
                    {...props}
             />
                 <label htmlFor={id}>{label}</label>
-            { icon && <span className={icon}></span> }
         </div>
     );
 };
-export default Checkbox;
+export default Radio;
