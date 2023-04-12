@@ -9,8 +9,9 @@ import Radio from "../components/Radio";
 
 export default function Buildings() {
 
+    const queryInitial = [{field: "deadline", value: "Любой"}];
     const baseUrl = '/api/buildings'
-    const [queryParams, setQueryParams] = useState([{field: "deadline", value: "Любой срок"}])
+    const [queryParams, setQueryParams] = useState(queryInitial)
     const [queryAddress, setQueryAddress] = useState('')
     const [page, setPage] = useState(0)
     const [error, setError] = useState('')
@@ -28,10 +29,16 @@ export default function Buildings() {
     const maxPage = Math.ceil(buildings?.length/limit)
 
     const handleChange = (evt) => {
-        if(queryParams.some(elem => elem.field === evt[0].field && elem.value === evt[0].value)) {
-            setQueryParams(queryParams.filter(elem => !(elem.field === evt[0].field && elem.value === evt[0].value)))
+        if(evt[0].field === 'deadline') {
+            const $deadline = queryParams.find(item => item.field === 'deadline');
+            $deadline.value = evt[0].value;
+            setQueryParams(previousData => [...previousData])
         } else {
-            setQueryParams(previousData => [...previousData, ...evt])
+            if(queryParams.some(elem => elem.field === evt[0].field && elem.value === evt[0].value)) {
+                setQueryParams(queryParams.filter(elem => !(elem.field === evt[0].field && elem.value === evt[0].value)))
+            } else {
+                setQueryParams(previousData => [...previousData, ...evt])
+            }
         }
     }
 
@@ -41,13 +48,12 @@ export default function Buildings() {
     }
 
     const handleResetClick = (e) => {
-        setQueryParams([])
+        setQueryParams(queryInitial)
         setQueryAddress('')
         setPage(0)
     }
 
     useEffect(() => {
-        console.log(queryParams)
         let actAddress =''
         queryParams.forEach(param => {
             actAddress += '&';
@@ -155,8 +161,8 @@ export default function Buildings() {
                                                            label={'Любой'}
                                                            name={'deadline'}
                                                            id={'deadline'}
-                                                           value={'all'}
-                                                           checked={queryParams.some(item => item.value === "Любой срок")}
+                                                           value={'Любой'}
+                                                           checked={queryParams.some(item => item.value === "Любой")}
                                                            onChange={handleChange}
                                                            />
                                                    </li>
@@ -175,8 +181,8 @@ export default function Buildings() {
                                                            label={'В этом году'}
                                                            name={'deadline'}
                                                            id={'this_year'}
-                                                           value={'В этом году'}
-                                                           checked={queryParams.some(item => item.value === "В этом году")}
+                                                           value={'Этот'}
+                                                           checked={queryParams.some(item => item.value === "Этот")}
                                                            onChange={handleChange}
                                                        />
                                                    </li>
@@ -185,8 +191,8 @@ export default function Buildings() {
                                                            label={'В следующем году'}
                                                            name={'deadline'}
                                                            id={'next_year'}
-                                                           value={'В следующем году'}
-                                                           checked={queryParams.some(item => item.value === "В следующем году")}
+                                                           value={'Следующий'}
+                                                           checked={queryParams.some(item => item.value === "Следующий")}
                                                            onChange={handleChange}
                                                        />
                                                    </li>

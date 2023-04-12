@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Building;
 use App\Http\Requests\StoreBuildingRequest;
 use App\Http\Requests\UpdateBuildingRequest;
+use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,8 +43,21 @@ class BuildingController extends Controller
             })
             ->when($deadline, function (Builder $query, string $deadline) {
                 switch ($deadline) {
-                    case 'all':
-                        $query->where('deadline', '');
+                    case 'Любой':
+                        $query->whereNotNull('deadline');
+                        break;
+                    case 'Сдан':
+                        $query->where('deadline', '<', Carbon::now());
+                        break;
+                    case 'Этот':
+                        $query->whereBetween('deadline', [
+                            Carbon::now(),
+                            Carbon::now()->endOfYear(),
+                        ]);
+                        break;
+                    case 'Следующий':
+                        $query->whereYear('deadline', '>', date('Y'));
+                        break;
                 }
             })
             ->when($yard, function (Builder $query, string $yard) {
